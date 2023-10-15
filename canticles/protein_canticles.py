@@ -436,15 +436,13 @@ def get_atomic_mass(chem: str, **_) -> float:
     return round(total_mass, 3)
 
 
-def convert_aa_name(sequence: str, name_dict: dict = None, sep: str = '',
-                    use_default_register: bool = True) -> str:
+def convert_aa_name(sequence: str, sep: str = '',
+                    use_default_register: bool = False, **_) -> str:
     """
     Converts a sequence of one-letter amino acid codes to three-letter designations.
 
     Arguments:
     - sequence (str): String with one-letter amino acid codes.
-    - name_dict (dict[str, str], optional): A dictionary linking one-letter codes to three-letter designations.
-    If not provided, the standard AA_NAME_DICT dictionary is used.
     - sep (str, optional): Separator between three-letter amino acid designations. There is no delimiter by default.
     - use_default_register(bool, optional): Determines whether to preserve letter case in three-letter designations.
     If True, the letters will be converted to upper or lower case depending on the case of the depending
@@ -453,29 +451,20 @@ def convert_aa_name(sequence: str, name_dict: dict = None, sep: str = '',
     Return:
     - str: A string of three-letter amino acid designations separated by the specified delimiter.
     """
+    new_name = []
 
-    new_name = ''
-    if name_dict is None:
-        name_dict = AA_NAME_DICT
-    for i, aa in enumerate(sequence):
-        if aa in name_dict:
-            if use_default_register is False:
-                new_name += name_dict[aa]
-            elif use_default_register is True:
+    for aa in sequence:
+        if aa in AA_NAME_DICT:
+            if use_default_register is True:
                 if aa.isupper():
-                    new_name += name_dict[aa].upper()
+                    new_name.append(AA_NAME_DICT[aa].upper())
                 else:
-                    new_name += name_dict[aa].lower()
+                    new_name.append(AA_NAME_DICT[aa].lower())
             else:
-                if aa.isupper():
-                    new_name += name_dict[aa].lower()
-                else:
-                    new_name += name_dict[aa].upper()
-            if sep and (i + 1) < len(sequence):
-                new_name += sep
+                new_name.append(AA_NAME_DICT[aa])
         else:
             raise ValueError(f'Unknown amino acid: {aa}')
-    return new_name
+    return sep.join(new_name)
 
 # defined later to let all funcs be initialized before passed here
 command_dct = {
