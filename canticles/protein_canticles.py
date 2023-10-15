@@ -143,10 +143,10 @@ def is_protein_valid(seq: str) -> bool:
     """
     Checks if protein is valid.
 
-    Arguments:
+    Args:
     - seq (str): seq to be checked
 
-    Return:
+    Returns:
     - bool, the result of the check
     """
 
@@ -162,30 +162,27 @@ def find_sites(seq: str,
     """
     Finds indexes of given sites.
 
-    Arguments:
+    Args:
     - seq (str): seq to be checked
     - *args (str): sites to be found
     - is_one_based (bool): whether result should be 0- (False) or 1-indexed (True). Default False
 
-    Return:
+    Returns:
     - dict: dictionary of sites as keys and lists of indexes for the site where it's been found
     """
-
-    window_sizes = invert_dct(get_sites_lengths(
-        sites))  # get lengths of all sites and stick them together to avoid passing through seq multiple times if
-    # possible
     found_sites = {}
-    for window_size in window_sizes:  # perform iteration for all given lengths of sites
-        for i in range(
-                len(seq) - window_size + 1):  # iterate through seq with step one and consider window
-            # of site length each step
-            scatter = seq[i:i + window_size]  # get fragment of sequence with length of window i.e. scatter
-            for site in window_sizes[window_size]:
-                if scatter == site:  # check if scatter is site
-                    found_sites[site] = (
-                            found_sites.get(site, [])  # get
-                            + [i + is_one_based]
-                    )  # append index to list in dict
+
+    for site in sites:
+        site_length = len(site)
+        for idx in range(len(seq) - site_length + 1):
+            scatter = seq[idx:idx + site_length]
+            if scatter == site:
+                if is_one_based:
+                    index = idx + 1
+                else:
+                    index = idx
+                found_sites.setdefault(site, []).append(index)
+
     return found_sites
 
 
