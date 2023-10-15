@@ -487,16 +487,17 @@ def parse_input(inp: str, **kwargs) -> dict:
     """
     Parses input and returns dict of seqs.
 
-    Arguments:
+    Args:
     - inp (str): Input path or seq or dict of seqs or list of seqs
     - **kwargs: Additional keyword arguments to be passed to input reader (e.g. )
 
-    Return:
+    Returns:
     - parsed_dct (dict): dict where keys are number or name of seq and value of seq
     """
 
     parsed_dct = {}
     inp_type = type(inp)  # get input type
+    
     if inp_type == list:
         for i, seq in enumerate(inp):
             parsed_dct |= {i: seq}
@@ -517,25 +518,26 @@ def run_ultimate_protein_tools(command,
     """
     Accepts command and runs it on input data with params
 
-    Arguments:
+    Args:
     - command (str): Valid command from command_dct
     - inp (str): Input in form of path, seq, seq list or seq dct
 
-    Return:
+    Returns:
     - output_dct (dict): dict where keys are number or name of seq and values are results of command run
     """
     output_dct = {}
     input_dct = parse_input(inp, **kwargs)
+
     for name in input_dct:
         if command in command_dct and command != 'get_atomic_mass':
             if is_protein_valid(input_dct[name]):
                 output_dct[name] = command_dct[command](input_dct[name], *args, **kwargs)
             else:
-                output_dct[name] = is_protein_valid(input_dct[name])
+                raise ValueError('Invalid protein sequence')
         elif command == 'get_atomic_mass':
             output_dct[name] = command_dct[command](input_dct[name], *args, **kwargs)
         else:
-            print('Command invalid')
+            raise ValueError('Invalid command')
     if len(output_dct) == 1:
         return output_dct[list(output_dct.keys())[0]]
     return output_dct
