@@ -139,40 +139,6 @@ def read_seq_from_fasta(path_to_seq: str,
     return sequences
 
 
-def get_sites_lengths(sites: list) -> dict:
-    """
-    Takes sites list and calculates their lengths.
-
-    Arguments:
-    - sites (list): list of sites (str)
-
-    Return:
-    - dict: dict of sites length {'site': 'length',}
-    """
-
-    sites_length_dct = {}
-    for site in sites:
-        sites_length_dct[site] = len(site)
-    return sites_length_dct
-
-
-def invert_dct(dct: dict) -> dict:
-    """
-    Inverts a dict.
-
-    Arguments:
-    - dct (dict): dict to be inverted
-
-    Return:
-    - dict: inverted dict
-    """
-
-    inv_dct = {}
-    for k, v in dct.items():
-        inv_dct[v] = inv_dct.get(v, []) + [k]  # get value from dict (return [] if empty) and append key
-    return inv_dct
-
-
 def is_protein_valid(seq: str) -> bool:
     """
     Checks if protein is valid.
