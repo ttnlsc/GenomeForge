@@ -249,7 +249,7 @@ def check_all_upper(codon: str) -> bool:
     - bool: if all letters are uppercase
     """
     check_upper = True
-    
+
     for letter in (set(codon)):
         check_upper = letter.isupper() and check_upper
     return check_upper
@@ -308,7 +308,6 @@ def get_length_of_protein(seq: str, **_) -> int:
     Return:
     - int: sequence length
     """
-
     return len(seq)
 
 
@@ -341,12 +340,12 @@ def get_fracture_of_aa(seq: str, show_as_percentage: bool = False, aminoacids: s
     """
     Calculates the fracture or percentage of amino acids in a protein sequence.
 
-    Arguments:
+    Args:
     - seq (str): sequence in which you need to calculate the fracture of amino acids
     - show_as_percentage (bool): change it to True, if you want to get results with percentages
     - aminoacids (str): the fracture of which amino acids to count in the sequence
 
-    Return:
+    Returns:
     - dict: a dictionary with amino acids and its fracture or percentage
     """
 
@@ -364,25 +363,21 @@ def get_fracture_of_aa(seq: str, show_as_percentage: bool = False, aminoacids: s
     return aa_dict_percent
 
 
-def calculate_protein_mass(sequence: str, aa_atomic_mass: dict = None) -> float:
+def calculate_protein_mass(sequence: str, **_) -> float:
     """
     Calculates the molecular mass of a protein based on its amino acid sequence and a dictionary of amino acid masses.
 
     Arguments:
     - sequence(str or list): A string or list of characters representing the amino acid sequence.
-    - aa_atomic_mass(dict): A dictionary linking amino acids to their masses in atomic mass units.
-    
+
     Return:
     - float: The molecular mass of a protein in atomic mass units, rounded to the third decimal place.
     """
-
     total_mass = 0.0
-    if aa_atomic_mass is None:
-        aa_atomic_mass = AA_MASS_DICT
 
     for aa in sequence:
-        if aa in aa_atomic_mass:
-            total_mass += aa_atomic_mass[aa]
+        if aa in AA_MASS_DICT:
+            total_mass += AA_MASS_DICT[aa]
         else:
             raise ValueError(f'Unknown amino acid: {aa}')
     total_mass = total_mass - H2O_WEIGHT * (len(sequence) - 1)
