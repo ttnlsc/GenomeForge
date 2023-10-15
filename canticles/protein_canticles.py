@@ -1,36 +1,20 @@
 H2O_WEIGHT: float = 18.01468
 
 AA_MASS_DICT = {
-    'G': 75.0659, 'g': 75.0659,
-    'L': 131.17262, 'l': 131.17262,
-    'Y': 181.18894, 'y': 181.18894,
-    'S': 105.09158, 's': 105.09158,
-    'E': 147.12826, 'e': 147.12826,
-    'Q': 146.1438, 'q': 146.1438,
-    'D': 133.10158, 'd': 133.10158,
-    'N': 132.11712, 'n': 132.11712,
-    'F': 165.18994, 'f': 165.18994,
-    'A': 89.09258, 'a': 89.09258,
-    'K': 146.18716, 'k': 146.18716,
-    'R': 174.20056, 'r': 174.20056,
-    'H': 155.15466, 'h': 155.15466,
-    'C': 121.15758, 'c': 121.15758,
-    'V': 117.14594, 'v': 117.14594,
-    'P': 115.13026, 'p': 115.13026,
-    'W': 204.22648, 'w': 204.22648,
-    'I': 131.17262, 'i': 131.17262,
-    'M': 149.21094, 'm': 149.21094,
-    'T': 119.11826, 't': 119.11826,
+    'G': 75.0659, 'g': 75.0659, 'L': 131.17262, 'l': 131.17262,
+    'Y': 181.18894, 'y': 181.18894, 'S': 105.09158, 's': 105.09158,
+    'E': 147.12826, 'e': 147.12826, 'Q': 146.1438, 'q': 146.1438,
+    'D': 133.10158, 'd': 133.10158, 'N': 132.11712, 'n': 132.11712,
+    'F': 165.18994, 'f': 165.18994, 'A': 89.09258, 'a': 89.09258,
+    'K': 146.18716, 'k': 146.18716, 'R': 174.20056, 'r': 174.20056,
+    'H': 155.15466, 'h': 155.15466, 'C': 121.15758, 'c': 121.15758,
+    'V': 117.14594, 'v': 117.14594, 'P': 115.13026, 'p': 115.13026,
+    'W': 204.22648, 'w': 204.22648, 'I': 131.17262, 'i': 131.17262,
+    'M': 149.21094, 'm': 149.21094, 'T': 119.11826, 't': 119.11826,
 }
 
 ATOMIC_MASS = {
-    'C': 12.011,
-    'H': 1.00784,
-    'O': 15.999,
-    'N': 14.0067,
-    'S': 32.065,
-    'Fe':55.845,
-    'Se':78,96
+    'C': 12.011, 'H': 1.00784, 'O': 15.999, 'N': 14.0067, 'S': 32.065, 'Fe': 55.845, 'Se': 78.96,
 }
 
 AA_NAME_DICT = {
@@ -56,7 +40,7 @@ AA_NAME_DICT = {
     'T': 'Thr', 't': 'Thr'
 }
 
-RNA_AA_TABLE = {
+AA_RNA_TABLE = {
     'F': ['UUU', 'UUC'],
     'L': ['UUA', 'UUG', 'CUU', 'CUC', 'CUA', 'CUG'],
     'S': ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'],
@@ -101,134 +85,22 @@ RNA_AA_TABLE = {
 }
 
 RNA_CODON_TABLE = {
-    'UUU': 'F',
-    'UUC': 'F',
-    'UUA': 'L',
-    'UUG': 'L',
-    'UCU': 'S',
-    'UCC': 'S',
-    'UCA': 'S',
-    'UCG': 'S',
-    'UAU': 'Y',
-    'UAC': 'Y',
-    'UAA': '*',
-    'UAG': '*',
-    'UGU': 'C',
-    'UGC': 'C',
-    'UGA': '*',
-    'UGG': 'W',
-    'CUU': 'L',
-    'CUC': 'L',
-    'CUA': 'L',
-    'CUG': 'L',
-    'CCU': 'P',
-    'CCC': 'P',
-    'CCA': 'P',
-    'CCG': 'P',
-    'CAU': 'H',
-    'CAC': 'H',
-    'CAA': 'Q',
-    'CAG': 'Q',
-    'CGU': 'R',
-    'CGC': 'R',
-    'CGA': 'R',
-    'CGG': 'R',
-    'AUU': 'I',
-    'AUC': 'I',
-    'AUA': 'I',
-    'AUG': 'M',
-    'ACU': 'T',
-    'ACC': 'T',
-    'ACA': 'T',
-    'ACG': 'T',
-    'AAU': 'N',
-    'AAC': 'N',
-    'AAA': 'K',
-    'AAG': 'K',
-    'AGU': 'S',
-    'AGC': 'S',
-    'AGA': 'R',
-    'AGG': 'R',
-    'GUU': 'V',
-    'GUC': 'V',
-    'GUA': 'V',
-    'GUG': 'V',
-    'GCU': 'A',
-    'GCC': 'A',
-    'GCA': 'A',
-    'GCG': 'A',
-    'GAU': 'D',
-    'GAC': 'D',
-    'GAA': 'E',
-    'GAG': 'E',
-    'GGU': 'G',
-    'GGC': 'G',
-    'GGA': 'G',
-    'GGG': 'G',
-    'uuu': 'f',
-    'uuc': 'f',
-    'uua': 'l',
-    'uug': 'l',
-    'ucu': 's',
-    'ucc': 's',
-    'uca': 's',
-    'ucg': 's',
-    'uau': 'y',
-    'uac': 'y',
-    'uaa': '*',
-    'uag': '*',
-    'ugu': 'c',
-    'ugc': 'c',
-    'uga': '*',
-    'ugg': 'w',
-    'cuu': 'l',
-    'cuc': 'l',
-    'cua': 'l',
-    'cug': 'l',
-    'ccu': 'p',
-    'ccc': 'p',
-    'cca': 'p',
-    'ccg': 'p',
-    'cau': 'h',
-    'cac': 'h',
-    'caa': 'q',
-    'cag': 'q',
-    'cgu': 'r',
-    'cgc': 'r',
-    'cga': 'r',
-    'cgg': 'r',
-    'auu': 'i',
-    'auc': 'i',
-    'aua': 'i',
-    'aug': 'm',
-    'acu': 't',
-    'acc': 't',
-    'aca': 't',
-    'acg': 't',
-    'aau': 'n',
-    'aac': 'n',
-    'aaa': 'k',
-    'aag': 'k',
-    'agu': 's',
-    'agc': 's',
-    'aga': 'r',
-    'agg': 'r',
-    'guu': 'v',
-    'guc': 'v',
-    'gua': 'v',
-    'gug': 'v',
-    'gcu': 'a',
-    'gcc': 'a',
-    'gca': 'a',
-    'gcg': 'a',
-    'gau': 'd',
-    'gac': 'd',
-    'gaa': 'e',
-    'gag': 'e',
-    'ggu': 'g',
-    'ggc': 'g',
-    'gga': 'g',
-    'ggg': 'g'
+    'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L', 'UCU': 'S', 'UCC': 'S', 'UCA': 'S', 'UCG': 'S',
+    'UAU': 'Y', 'UAC': 'Y', 'UAA': '*', 'UAG': '*', 'UGU': 'C', 'UGC': 'C', 'UGA': '*', 'UGG': 'W',
+    'CUU': 'L', 'CUC': 'L', 'CUA': 'L', 'CUG': 'L', 'CCU': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
+    'CAU': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q', 'CGU': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
+    'AUU': 'I', 'AUC': 'I', 'AUA': 'I', 'AUG': 'M', 'ACU': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',
+    'AAU': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K', 'AGU': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',
+    'GUU': 'V', 'GUC': 'V', 'GUA': 'V', 'GUG': 'V', 'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
+    'GAU': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E', 'GGU': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G',
+    'uuu': 'f', 'uuc': 'f', 'uua': 'l', 'uug': 'l', 'ucu': 's', 'ucc': 's', 'uca': 's', 'ucg': 's',
+    'uau': 'y', 'uac': 'y', 'uaa': '*', 'uag': '*', 'ugu': 'c', 'ugc': 'c', 'uga': '*', 'ugg': 'w',
+    'cuu': 'l', 'cuc': 'l', 'cua': 'l', 'cug': 'l', 'ccu': 'p', 'ccc': 'p', 'cca': 'p', 'ccg': 'p',
+    'cau': 'h', 'cac': 'h', 'caa': 'q', 'cag': 'q', 'cgu': 'r', 'cgc': 'r', 'cga': 'r', 'cgg': 'r',
+    'auu': 'i', 'auc': 'i', 'aua': 'i', 'aug': 'm', 'acu': 't', 'acc': 't', 'aca': 't', 'acg': 't',
+    'aau': 'n', 'aac': 'n', 'aaa': 'k', 'aag': 'k', 'agu': 's', 'agc': 's', 'aga': 'r', 'agg': 'r',
+    'guu': 'v', 'guc': 'v', 'gua': 'v', 'gug': 'v', 'gcu': 'a', 'gcc': 'a', 'gca': 'a', 'gcg': 'a',
+    'gau': 'd', 'gac': 'd', 'gaa': 'e', 'gag': 'e', 'ggu': 'g', 'ggc': 'g', 'gga': 'g', 'ggg': 'g'
 }
 
 
@@ -236,27 +108,35 @@ def read_seq_from_fasta(path_to_seq: str,
                         use_full_name: bool = False,
                         **_) -> dict:
     """
-    Reads sequences from fasta file and returns dictionary.
+    Reads sequences from a FASTA file and returns a dictionary.
 
-    Arguments:
-    - path_to_seq (str): path to file
+    Args:
+    - path_to_seq (str): The path to the FASTA file.
+    - use_full_name (bool): Set to True if you want to use the full sequence name with properties.
 
-    Return:
-    - dict: dict of sequences names as keys and sequences themselves as values {'seq_name': 'sequence',}
+    Returns:
+    - dict: A dictionary with sequence names as keys and sequences as values, e.g. {'seq_name': 'sequence'}
     """
+    sequences = {}
+    current_name = None
 
-    with open(path_to_seq) as f:
-        out_dct = {}
-        for line in f:
+    with open(path_to_seq) as file:
+        for line in file:
             line = line.strip()
-            if line.startswith('>'):  # check for first line in seq
-                if use_full_name:  # check if user set full name in fasta
-                    name = line[1:]  # take whole fasta properties (e.g. if names not unique)
+            if line.startswith('>'):
+                if current_name is not None:
+                    sequences[current_name] = ''.join(current_sequence)
+                if use_full_name:
+                    current_name = line[1:]
                 else:
-                    name = line[1:].split()[0]
+                    current_name = line[1:].split()[0]
+                current_sequence = []
             else:
-                out_dct[name] = out_dct.get(name, '') + line  # get value from dict (return '' if empty) and append str
-    return out_dct
+                current_sequence.append(line)
+
+        sequences[current_name] = ''.join(current_sequence)
+
+    return sequences
 
 
 def get_sites_lengths(sites: list) -> dict:
