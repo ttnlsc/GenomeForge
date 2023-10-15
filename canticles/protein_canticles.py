@@ -385,48 +385,53 @@ def calculate_protein_mass(sequence: str, **_) -> float:
     return round(total_mass, 3)
 
 
-def get_atomic_mass(chem: str, atomic_mass: dict = None) -> float:
+def get_atomic_mass(chem: str, **_) -> float:
     """
     Calculates the molecular mass of a biological molecule, primarily an amino acid, based on a simple chemical formula.
+    A dictionary linking the chemical elements Carbon, Hydrogen, Oxygen, Nitrogen, Sulfur, Iron and Selenium
+    with their masses in atomic mass units.
 
-    Arguments:
+    Args:
     - chem (str): String representing a simple chemical formula, e.g. C2H5OH
-    - atomic_mass (dict[str, float], optional): A dictionary linking the chemical elements Carbon, Hydrogen, Oxygen,
-    Nitrogen, and Sulfur with their masses in atomic mass units.
 
-    Return:
+    Returns:
     - float: Molecular mass of a biological molecule in atomic mass units.
     """
-
     total_mass = 0
-    element = ''
-    number = ''
-    
-    for char in chem:
-        if char.isalpha():
-            if char.isupper():
-                if element and number:
-                    total_mass += ATOMIC_MASS[element] * int(number)
-                    number = ''
-                    element = ''
-                    element += char
-                elif element:
-                    total_mass += ATOMIC_MASS[element]
-                    element = ''
-                    element += char
-                else:
-                    element += char
-            else:
-                element += char
-        elif char.isdigit():
-            number += char
-        else:
-            raise ValueError(f'Unexpected character: {char}')
+    element = []
+    number = []
 
-    if element and number:
-        total_mass += ATOMIC_MASS[element] * int(number)
-    elif element:
-        total_mass += ATOMIC_MASS[element]
+    for character in chem:
+        if character.isalpha():
+            if character.isupper():
+                if element and number:
+                    if ''.join(element) not in ATOMIC_MASS:
+                        raise ValueError(f'Unexpected character: {character}')
+                    total_mass += ATOMIC_MASS[''.join(element)] * int(''.join(number))
+                    number.clear(), element.clear()
+                    element.append(character)
+                elif element:
+                    if ''.join(element) not in ATOMIC_MASS:
+                        raise ValueError(f'Unexpected character: {character}')
+                    total_mass += ATOMIC_MASS[''.join(element)]
+                    element.clear()
+                    element.append(character)
+                else:
+                    element.append(character)
+            else:
+                element.append(character)
+        elif character.isdigit():
+            number.append(character)
+        else:
+            raise ValueError(f'Unexpected character: {character}')
+
+    if ''.join(element) not in ATOMIC_MASS:
+        raise ValueError(f'Unexpected character: {character}')
+    else:
+        if element and number:
+            total_mass += ATOMIC_MASS[''.join(element)] * int(''.join(number))
+        elif element:
+            total_mass += ATOMIC_MASS[''.join(element)]
 
     return round(total_mass, 3)
 
