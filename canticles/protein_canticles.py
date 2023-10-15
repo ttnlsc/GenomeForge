@@ -188,34 +188,37 @@ def find_sites(seq: str,
 
 def get_protein_rnas(seq: str,
                      check_if_user_conscious: bool = False,
-                     **_) -> list:
+                     **_) -> list or None:
     """
     Returns list of all possible RNA's from which can serve as matrix for protein synthesis.
 
     WARNING: can be computationally intensive on longer sequences,
     will NOT start unless check_if_user_conscious is True!
 
-    Arguments:
+    Args:
     - seq (str): seq to be checked
     - check_if_user_conscious (bool): checks user's consciousness. Default False
 
-    Return:
-    - list: list of possible RNA's as str
+    Returns:
+    - list: list of possible RNA's as str or None if not conscious (set check_if_user_conscious to True)
     """
 
     if check_if_user_conscious:
         kmers = ['']  # set initial kmers
         for amino_acid in seq:  # iterate AAs
             current_kmers = []
-            codons = RNA_AA_TABLE[amino_acid]  # get list of codons for AA
+            codons = AA_RNA_TABLE[amino_acid]  # get list of codons for AA
+            if amino_acid not in AA_RNA_TABLE:
+                raise ValueError(f"Amino acid '{amino_acid}' is not found in the AA_RNA_TABLE.")
             for codon in codons:
                 for kmer in kmers:
-                    current_kmers.append(kmer + codon)  # append every codon to existing kmers
+                    current_kmers.append(''.join([kmer + codon]))  # append every codon to existing kmers
             kmers = current_kmers  # re-write k-mers for next iteration
 
         return kmers
-
-    return "You don't know what you're doing!"  # politely ask user to reconsider their actions
+    else:
+        print("You don't know what you're doing!")  # politely ask user to reconsider their actions
+        return None
 
 
 def get_protein_rnas_number(seq: int, **_) -> int:
