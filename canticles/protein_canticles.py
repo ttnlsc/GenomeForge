@@ -221,18 +221,18 @@ def get_protein_rnas(seq: str,
         return None
 
 
-def get_protein_rnas_number(seq: int, **_) -> int:
+def get_protein_rnas_number(seq: str, **_) -> int:
     """
     Get number of all possible RNA's for a given protein.
 
-    Arguments:
+    Args:
     - seq (str): seq to be checked
 
-    Return:
-    - rnas_num (int): number of possible RNA's for seq
+    Returns:
+    - int: number of possible RNA's for seq
     """
-
     rnas_num = 1
+
     for amino_acid in seq:
         rnas_num *= len(RNA_AA_TABLE[amino_acid])
     return rnas_num
@@ -242,35 +242,35 @@ def check_all_upper(codon: str) -> bool:
     """
     Checks whether all letters in colon are upper
 
-    Arguments:
+    Args:
     - codon (str): codon to be checked
 
-    Return:
-    - check_upper (bool): if all letters are uppercase
+    Returns:
+    - bool: if all letters are uppercase
     """
-
     check_upper = True
+    
     for letter in (set(codon)):
         check_upper = letter.isupper() and check_upper
     return check_upper
 
 
-def get_frameshift_proteins(seq: int,
+def get_frameshift_proteins(seq: str,
                             check_if_user_conscious: bool = False,
                             is_stop_codon_termination_enabled: bool = False,
-                            **_) -> dict:
+                            **_) -> dict or None:
     """
     Returns list of all possible proteins from all possible frames in peptide.
 
     WARNING: can be computationally intensive on longer sequences,
     will NOT start unless check_if_user_conscious is True!
-    
-    Arguments:
+
+    Args:
     - seq (str): seq to be checked
     - check_if_user_conscious (bool): checks user's consciousness. Default False
     - is_stop_codon_termination_enabled (bool): terminate translation when reached stop-codon. Default False.
 
-    Return:
+    Returns:
     - dict: dict of lists of all possible frames proteins:
     {frame_0: ['protein_seqs'], frame_1: ['protein_seqs'], frame_2: ['protein_seqs']}
     """
@@ -287,13 +287,15 @@ def get_frameshift_proteins(seq: int,
                     if not check_all_upper(frame_codon):  # check if all letters in codon uppercase
                         frame_codon = frame_codon.lower()  # if not change all to lowercase
                     frame += RNA_CODON_TABLE[frame_codon]
-                    if is_stop_codon_termination_enabled and RNA_CODON_TABLE[
-                        frame_codon] == '*':  # stop writing if meet stop-codon
+                    if (is_stop_codon_termination_enabled and
+                            RNA_CODON_TABLE[frame_codon] == '*'):  # stop writing if meet stop-codon
                         break
                 frames_list.append(frame)  # append frame to frames list
             frameshift_dct[f'frame_{frame_number}'] = list(set(frames_list))  # clean duplicates and write to dict
         return frameshift_dct
-    return "You don't fucking know what you're doing!"  # politely ask user to reconsider their actions
+    else:
+        print("You don't know what you're doing!")  # politely ask user to reconsider their actions
+        return None
 
 
 def get_length_of_protein(seq: str, **_) -> int:
