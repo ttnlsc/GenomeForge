@@ -150,7 +150,7 @@ def is_protein_valid(seq: str) -> bool:
     - bool, the result of the check
     """
 
-    if set(seq).issubset(RNA_AA_TABLE):
+    if set(seq).issubset(AA_RNA_TABLE):
         return True
     return False
 
@@ -466,22 +466,6 @@ def convert_aa_name(sequence: str, sep: str = '',
             raise ValueError(f'Unknown amino acid: {aa}')
     return sep.join(new_name)
 
-# defined later to let all funcs be initialized before passed here
-command_dct = {
-    'find_sites': find_sites,
-    'get_protein_rnas': get_protein_rnas,
-    'get_protein_rnas_number': get_protein_rnas_number,
-    'get_frameshift_proteins': get_frameshift_proteins,
-    'is_protein_valid': is_protein_valid,
-    'get_length_of_protein': get_length_of_protein,
-    'count_aa': count_aa,
-    'get_fracture_of_aa': get_fracture_of_aa,
-    'calculate_protein_mass': calculate_protein_mass,
-    'get_atomic_mass': get_atomic_mass,
-    'convert_aa_name': convert_aa_name,
-    }
-
-
 
 def parse_input(inp: str, **kwargs) -> dict:
     """
@@ -509,35 +493,3 @@ def parse_input(inp: str, **kwargs) -> dict:
         parsed_dct = {0: inp}
 
     return parsed_dct
-
-
-def run_ultimate_protein_tools(command,
-                               inp,
-                               *args,
-                               **kwargs):
-    """
-    Accepts command and runs it on input data with params
-
-    Args:
-    - command (str): Valid command from command_dct
-    - inp (str): Input in form of path, seq, seq list or seq dct
-
-    Returns:
-    - output_dct (dict): dict where keys are number or name of seq and values are results of command run
-    """
-    output_dct = {}
-    input_dct = parse_input(inp, **kwargs)
-
-    for name in input_dct:
-        if command in command_dct and command != 'get_atomic_mass':
-            if is_protein_valid(input_dct[name]):
-                output_dct[name] = command_dct[command](input_dct[name], *args, **kwargs)
-            else:
-                raise ValueError('Invalid protein sequence')
-        elif command == 'get_atomic_mass':
-            output_dct[name] = command_dct[command](input_dct[name], *args, **kwargs)
-        else:
-            raise ValueError('Invalid command')
-    if len(output_dct) == 1:
-        return output_dct[list(output_dct.keys())[0]]
-    return output_dct

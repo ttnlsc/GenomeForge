@@ -201,29 +201,3 @@ def process_multiple_sequences(sequences: list[str], action: str) -> list[str] |
 
     return results
 
-
-def run_dna_rna_tools(*args) -> str | int | float | list[str] | list[int] | list[float]:
-    """
-    Runs DNA/RNA tools based on the specified arguments.
-
-    Args:
-    - args: Variable-length argument list. Should contain one or more sequences followed by an action.
-
-    Returns:
-    - str | int | float | list[str] | list[int] | list[float]: The result of the specified action(s).
-    If a single sequence is provided, a string, integer or float is returned.
-    If multiple sequences are provided, a list of strings, integers or floats is returned.
-    """
-    if len(args) < 2:
-        raise ValueError('Insufficient arguments to execute operation')
-
-    sequences = args[:-1]
-    action = args[-1]
-
-    if len(args) == 2:
-        sequence = sequences[0]
-        result = process_single_sequence(sequence, action=action)
-    else:
-        result = process_multiple_sequences(sequences, action=action)
-
-    return result
