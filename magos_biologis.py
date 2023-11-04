@@ -1,3 +1,4 @@
+import os
 import sys
 sys.path.append('canticles')
 from canticles import dna_rna_canticles
@@ -79,13 +80,14 @@ def run_protein_canticles(command,
     return output_dct
 
 
-def filter_fastq(seqs: dict, gc_bounds: tuple | int = (0, 100), length_bounds: tuple | int = (0, 2**32),
-                quality_threshold: int = 0) -> dict:
+def filter_fastq(path_to_seqs: str, output_file_name: str = None, gc_bounds: tuple | int = (0, 100),
+                length_bounds: tuple | int = (0, 2**32), quality_threshold: int = 0) -> None:
     """
     Filters fastq sequences based on the GC-content, length and quality parameters.
 
     Args:
-    - seqs (dict): Dictionary of fastq sequences in the format {'name': ('sequence', 'quality')}
+    - path_to_seqs (str): The path to the Fastq file to be filtered.
+    - output_file_name (str): The name of the file where the filtered Fastq sequences will be saved.
     - gc_bounds (tuple, int): GC content range (in percentages) for filtering. If you pass a single number 
     to the argument, it is assumed to be an upper bound.
     - length_bounds (tuple, int): Length range for filtering. If you pass a single number to the argument,
@@ -93,11 +95,15 @@ def filter_fastq(seqs: dict, gc_bounds: tuple | int = (0, 100), length_bounds: t
     - quality_threshold (int): Threshold value for average read quality filtering
 
     Returns:
-    - dict: Dictionary with filtered reads
+    - None
     """
+    if output_file_name is None:
+        output_file_name = os.path.basename(path_to_seqs)
+
+    input_seqs = fastq_canticles.parse_fastq(path_to_seqs)
     filtered_seqs = {}
 
-    for name, (sequence, quality) in seqs.items():
+    for name, (sequence, quality) in input_seqs.items():
         gc_content = fastq_canticles.calculate_gc_content(sequence)
         if isinstance(gc_bounds, tuple):
             if not (gc_bounds[0] <= gc_content <= gc_bounds[1]):
@@ -115,4 +121,6 @@ def filter_fastq(seqs: dict, gc_bounds: tuple | int = (0, 100), length_bounds: t
             continue
         filtered_seqs[name] = (sequence, quality)
 
-    return filtered_seqs
+    fastq_canticles.write_filtered_fastq(filtered_seqs=filtered_seqs, output_file_name=output_file_name)
+
+    return None
