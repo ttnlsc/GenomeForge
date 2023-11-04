@@ -234,7 +234,7 @@ def get_protein_rnas_number(seq: str, **_) -> int:
     rnas_num = 1
 
     for amino_acid in seq:
-        rnas_num *= len(RNA_AA_TABLE[amino_acid])
+        rnas_num *= len(AA_RNA_TABLE[amino_acid])
     return rnas_num
 
 

@@ -1,8 +1,8 @@
 import sys
-sys.path.append('./GenomeForge/canticles')
-from GenomeForge.canticles import dna_rna_canticles
-from GenomeForge.canticles import protein_canticles
-from GenomeForge.canticles import fastq_canticles
+sys.path.append('canticles')
+from canticles import dna_rna_canticles
+from canticles import protein_canticles
+from canticles import fastq_canticles
 
 
 def run_dna_rna_canticles(*args) -> str | int | float | list[str] | list[int] | list[float]:
@@ -90,7 +90,7 @@ def filter_fastq(seqs: dict, gc_bounds: tuple | int = (0, 100), length_bounds: t
     to the argument, it is assumed to be an upper bound.
     - length_bounds (tuple, int): Length range for filtering. If you pass a single number to the argument,
     it is assumed to be an upper bound.
-    - quality_threshold: Threshold value for average read quality filtering
+    - quality_threshold (int): Threshold value for average read quality filtering
 
     Returns:
     - dict: Dictionary with filtered reads
