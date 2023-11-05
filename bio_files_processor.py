@@ -107,3 +107,89 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, genes_to_find: list, n_before
         for gene, protein in selected_records:
             outfile.write(gene + '\n' + protein + '\n')
     return None
+
+
+def change_fasta_start_pos(input_fasta: str, shift: int, output_fasta: str = None) -> None:
+    """
+    Shifts the starting position of sequences in a FASTA file by the specified shift value.
+
+    Args:
+    - input_fasta (str): path to the input FASTA file.
+    - shift (int): number of positions to shift the start of each sequence.
+    - output_fasta (str): path to the output FASTA file with shifted sequences. If not provided, it will be generated
+      using the input file name.
+
+    Returns:
+    - None: the function doesn't return a value but writes the shifted FASTA sequences to the output file.
+    """
+    if output_fasta is None:
+        output_fasta = 'shifted_' + os.path.basename(input_fasta)
+
+    with open(input_fasta, mode='r') as infile:
+        input_data = infile.readlines()
+
+    output_str = []
+    name = ''
+    sequence = ''
+
+    for line in input_data:
+        line = line.strip()
+        if line.startswith('>') and not name:
+            name = line
+        elif not line.startswith('>'):
+            sequence = line[shift:]
+        elif name and sequence:
+            output_str.append(name)
+            output_str.append(sequence)
+            name = line
+            sequence = ''
+
+    if name and sequence:
+        output_str.append(name)
+        output_str.append(sequence)
+
+    with open(output_fasta, mode='w') as outfile:
+        outfile.write('\n'.join(output_str))
+    return None
+
+
+def parse_blast_output(input_file: str, output_file: str = None) -> None:
+    """
+    Extracts protein names from the QUERY file and creates a file containing information about sequences producing 
+    significant alignments. Protein names taken from Description column.
+
+    Args:
+    - input_file (str): path to the QUERY file.
+    - output_file (str, optional): path to the output file. If not provided, a default name is generated.
+
+    Returns:
+    - None: The function writes the selected gene to the output file.
+    """
+    if output_file is None:
+        output_file = 'parsed_' + os.path.basename(input_file)
+    with open(input_file, mode='r') as infile:
+        input_lines = infile.readlines()
+    # calculate the header
+    # I think the structure of the document is always the same, but just in case
+    count = 0
+    for line in input_lines:
+        line = line.strip()
+        if line.startswith('Description'):
+            count += 1
+            break
+        else:
+            count += 1
+    significant_alignments = []
+    for line in input_lines[count:]:
+        line = line.strip()
+        if line == '':
+            break
+        else:
+            column = line.split('...')[0]
+            significant_alignments.append(column)
+    significant_alignments = sorted(significant_alignments)
+
+    with open(output_file, mode='w') as outfile:
+        outfile.write('\n'.join(significant_alignments))
+
+    return None
