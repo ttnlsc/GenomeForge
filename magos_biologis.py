@@ -83,19 +83,19 @@ def run_protein_canticles(command,
 def filter_fastq(path_to_seqs: str, output_file_name: str = None, gc_bounds: tuple | int = (0, 100),
                 length_bounds: tuple | int = (0, 2**32), quality_threshold: int = 0) -> None:
     """
-    Filters fastq sequences based on the GC-content, length and quality parameters.
+    Filters FASTQ sequences based on the GC-content, length and quality parameters.
 
     Args:
-    - path_to_seqs (str): The path to the Fastq file to be filtered.
-    - output_file_name (str): The name of the file where the filtered Fastq sequences will be saved.
+    - path_to_seqs (str): the path to the FASTQ file to be filtered.
+    - output_file_name (str): the name of the file where the filtered FASTQ sequences will be saved.
     - gc_bounds (tuple, int): GC content range (in percentages) for filtering. If you pass a single number 
     to the argument, it is assumed to be an upper bound.
-    - length_bounds (tuple, int): Length range for filtering. If you pass a single number to the argument,
+    - length_bounds (tuple, int): length range for filtering. If you pass a single number to the argument,
     it is assumed to be an upper bound.
-    - quality_threshold (int): Threshold value for average read quality filtering
+    - quality_threshold (int): threshold value for average read quality filtering
 
     Returns:
-    - None
+    - None: the function doesn't return a value but writes the filtered FASTQ to the output file.
     """
     if output_file_name is None:
         output_file_name = os.path.basename(path_to_seqs)
