@@ -130,23 +130,25 @@ def change_fasta_start_pos(input_fasta: str, shift: int, output_fasta: str = Non
 
     output_str = []
     name = ''
-    sequence = ''
+    sequence = []
 
     for line in input_data:
         line = line.strip()
         if line.startswith('>') and not name:
             name = line
         elif not line.startswith('>'):
-            sequence = line[shift:]
+            sequence.append(line[shift:])
+            sequence.append(line[: shift + 1])
         elif name and sequence:
+            shifted_sequence = ''.join(sequence)
             output_str.append(name)
-            output_str.append(sequence)
+            output_str.append(shifted_sequence)
             name = line
-            sequence = ''
+            sequence = []
 
     if name and sequence:
         output_str.append(name)
-        output_str.append(sequence)
+        output_str.append(shifted_sequence)
 
     with open(output_fasta, mode='w') as outfile:
         outfile.write('\n'.join(output_str))
