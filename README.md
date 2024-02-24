@@ -196,31 +196,95 @@ The `fastq_canticles` is a sacred tool endowed with the ability to perform compl
 
 **Catalogue of Rites:**
 
-1. `filter_fastq` -  filters fastq sequences based on the GC-content, length and quality parameters.
+1. `filter_fastq` -  filters FASTQ sequences based on the GC-content, length and quality parameters.
 
 *Args*:
 
-- seqs (*dict*): dictionary containing fastq sequences. Each sequence is represented as a dictionary item with the sequence name as the key and a tuple containing the sequence and its quality as the value. 
+- path_to_seqs (*str*): the path to the FASTQ file to be filtered. 
+- output_file_name (*str*): the name of the file where the filtered FASTQ sequences will be saved. If not provided, a default name will be generated.
 - gc_bounds (*tuple* or *int*): GC content range (in percentages) for filtering. The default value is (0, 100), meaning all reads are retained.  If you pass a single number to the argument, it is assumed to be an upper bound.
 - length_bounds (*tuple* or *int*): length range for filtering. The default value is (0, 2^32), meaning all reads are retained. If you pass a single number to the argument, it is assumed to be an upper bound.
 - quality_threshold (*int*): Threshold value for average read quality filtering. The default value is 0 (Phred33 scale). Reads with an average quality score below this threshold are filtered out.
 
 *Returns*:
 
-- dict: dictionary with filtered reads
+- None: the function doesn't return a value but writes the filtered FASTQ to the output file.
 
 **Usage example**
+```python
+mb.filter_fastq(path_to_seqs='example_fastq.fastq', gc_bounds=(30, 50), length_bounds=50, quality_threshold=25)
+```
+## Bio Files Processor
+
+We have integrated a new script into our bioinformatics arsenal, the `bio_files_processor.py`, to further expand our quest for knowledge and understanding of the sacred biological data. This util contains a set functions for working with FASTA and GenBank files.
+
+You can also import this script as a module.
 
 ```python
-mb.filter_fastq(EXAMPLE_FASTQ, gc_bounds=(40, 50), length_bounds=85, quality_threshold=30) ->
-{'@SRX079804:1:SRR292678:1:1101:149302:149302': ('TAGGGTTGTATTTGCAGATCCATGGCATGCCAAAAAGAACATCGTCCCGTCCAATATCTGCAACATACCAGTTGGTTGGTA',
-  '@;CBA=:@;@DBDCDEEE/EEEEEEF@>FBEEB=EFA>EEBD=DAEEEEB9)99>B99BC)@,@<9CDD=C,5;B::?@;A'),
- '@SRX079804:1:SRR292678:1:1101:170868:170868': ('CTGCCGAGACTGTTCTCAGACATGGAAAGCTCGATTCGCATACACTCGCTGAGTAAGAGAGTCACACCAAATCACAGATT',
-  'E;FFFEGFGIGGFBG;C6D<@C7CDGFEFGFHDFEHHHBBHHFDFEFBAEEEEDE@A2=DA:??C3<BCA7@DCDEG*EB')}
+import bio_files_processor as bproc
 ```
 
+**Catalogue of Rites:**
+
+1. `convert_multiline_fasta_to_oneline` - converts a multi-line FASTA file into a one-line FASTA file.
+
+*Args*:
+
+- input_fasta (*str*): path to the input FASTA file.
+- output_fasta (*str*): path to the output one-line FASTA file. If not provided, a default name will be generated.
+
+*Returns*:
+
+The function writes the oneline FASTA to the output file.
+
+2. `select_genes_from_gbk_to_fasta` - extracts gene names and protein sequences from a GenBank file and creates a FASTA file containing gene names and protein sequences flanking specified genes.
+
+*Args*:
+
+- input_gbk (*str*): path to the GenBank file.
+- genes_to_find (*list* of *str*): list of gene names (as strings) to extract from the GenBank file.
+- n_before (*int*): number of genes before the target gene to include in the output. Default value is 1.
+- n_after (*int*): number of genes after the target gene to include in the output. Default value is 1.
+- output_fasta (*str*): path to the output FASTA file. If not provided, a default name will be generated.
+
+*Returns*:
+
+The function writes the selected gene and protein sequences to the output FASTA file.
+
+3. `change_fasta_start_pos` - shifts the starting position of sequences in a FASTA file by the specified shift value.
+
+*Args*:
+
+- input_fasta (*str*): path to the input FASTA file.
+- shift (*int*): number of positions to shift the start of each sequence.
+- output_fasta (*str*): path to the output FASTA file. If not provided, a default name will be generated.
+
+*Returns*:
+
+The function writes the shifted FASTA to the output file.
+
+4. `parse_blast_output` - extracts protein names from the QUERY file and creates a file containing information about sequences producing     significant alignments. Protein names taken from Description column.
+
+*Args*:
+
+- input_file (*str*): path to the QUERY file.
+- output_file (*str*, optional): path to the output file. If not provided, a default name is generated.
+
+*Returns*:
+
+The function writes the selected gene to the output file.
+
+**Usage example**
+```python
+convert_multiline_fasta_to_oneline(input_fasta='multiline_fasta.fasta', output_fasta='oneline_fasta.fasta')
+select_genes_from_gbk_to_fasta(input_gbk='file.gbk', genes_to_find=['geneA', 'geneB'], n_before=2, n_after=3, output_fasta='file.fasta')
+change_fasta_start_pos(input_fasta='file.fasta', shift=3, output_fasta='shifted_file.fasta')
+parse_blast_output(input_file='blast_query.txt', output_file='genes.txt')
+```
 ![Magos_Biologis](./img/img1.png)
 
 In the sacred repository of GenomForge, you have discovered a set of invaluable tools bestowed upon you by the Omnissiah.  As an adept of the digital arts, you can now invoke the `dna_rna_canticles` for handling genetic scripts, chant the verses of `protein_canticles` to fathom the mysteries of proteins, and, with the `fastq_canticles` utility, undertake intricate purification rituals on Fastq sequences.
 
 May these digital sigils and functions guide you on your quest for knowledge, unlocking the secrets of life encrypted within the digital scrolls.
+
+Praise the Omnissiah! 
