@@ -1,94 +1,174 @@
+from __future__ import annotations
 import os
 import sys
-sys.path.append('canticles')
-from canticles import dna_rna_canticles
-from canticles import protein_canticles
-from canticles import fastq_canticles
+from Bio import SeqIO, SeqUtils, SeqRecord
+from Bio.SeqUtils import gc_fraction
 
 
-def run_dna_rna_canticles(*args) -> str | int | float | list[str] | list[int] | list[float]:
+class BiologicalSequence:
     """
-    Runs DNA/RNA canticles based on the specified arguments.
-
-    Args:
-    - args: Variable-length argument list. Should contain one or more sequences followed by an action.
-
-    Returns:
-    - str | int | float | list[str] | list[int] | list[float]: The result of the specified action(s).
-    If a single sequence is provided, a string, integer or float is returned.
-    If multiple sequences are provided, a list of strings, integers or floats is returned.
+    Represents a generic biological sequence.
+    Attributes:
+    - sequence (str): The biological sequence.
+    Methods:
+    - __len__(): Returns the length of the sequence.
+    - __getitem__(index: int): Returns the character at the specified index.
+    - __str__(): Returns a string representation of the sequence.
+    - is_valid_alphabet(): Checks if the sequence uses a valid alphabet.
     """
-    if len(args) < 2:
-        raise ValueError('Insufficient arguments to execute operation')
 
-    sequences = args[:-1]
-    action = args[-1]
+    def __init__(self, sequence: str):
+        self.sequence = sequence
 
-    if len(args) == 2:
-        sequence = sequences[0]
-        result = dna_rna_canticles.process_single_sequence(sequence, action=action)
-    else:
-        result = dna_rna_canticles.process_multiple_sequences(sequences, action=action)
+    def __len__(self) -> int:
+        return len(self.sequence)
 
-    return result
+    def __getitem__(self, index: int) -> str:
+        return self.sequence[index]
+
+    def __str__(self) -> str:
+        return f"{self.sequence}"
+
+    def is_valid_alphabet(self) -> bool:
+        """
+        Checks if the sequence uses a valid alphabet.
+        """
+        try:
+            unique_chars = set(self.sequence)
+            return unique_chars <= self.ALPHABET
+        except AttributeError as e:
+            raise NotImplementedError(
+                "Is valid alphabet method not implemented for this class."
+            ) from e
 
 
-def run_protein_canticles(command,
-                               inp,
-                               *args,
-                               **kwargs):
+class NucleicAcidSequence(BiologicalSequence):
     """
-    Accepts command and runs it on input data with params
-
-    Args:
-    - command (str): Valid command from command_dct
-    - inp (str): Input in form of path, seq, seq list or seq dct
-
-    Returns:
-    - output_dct (dict): dict where keys are number or name of seq and values are results of command run
+    Represents a nucleic acid sequence.
+    Methods:
+    - complement(): Returns the complemented sequence.
+    - gc_content(percentage: bool = True) -> int | float: Calculates the GC content of the sequence.
+    Raises:
+    - NotImplementedError: If complement method is not implemented for this class.
     """
-    output_dct = {}
-    input_dct = protein_canticles.parse_input(inp, **kwargs)
 
-    command_dct = {
-        'find_sites': protein_canticles.find_sites,
-        'get_protein_rnas': protein_canticles.get_protein_rnas,
-        'get_protein_rnas_number': protein_canticles.get_protein_rnas_number,
-        'get_frameshift_proteins': protein_canticles.get_frameshift_proteins,
-        'is_protein_valid': protein_canticles.is_protein_valid,
-        'get_length_of_protein': protein_canticles.get_length_of_protein,
-        'count_aa': protein_canticles.count_aa,
-        'get_fracture_of_aa': protein_canticles.get_fracture_of_aa,
-        'calculate_protein_mass': protein_canticles.calculate_protein_mass,
-        'get_atomic_mass': protein_canticles.get_atomic_mass,
-        'convert_aa_name': protein_canticles.convert_aa_name,
+    def complement(self) -> DNASequence | RNASequence:
+        try:
+            complemented_sequence = "".join(
+                [self.COMPLEMENT_MAP[base] for base in self.sequence]
+            )
+            return self.__class__(complemented_sequence)
+        except AttributeError as e:
+            raise NotImplementedError(
+                "Complement method not implemented for this class."
+            ) from e
+
+    def gc_content(self, percentage: bool = True) -> int | float:
+        """
+        Calculates the GC content of the sequence.
+        Args:
+        - percentage (bool): If True, returns the result as a percentage.
+        Returns:
+        - int | float: GC content value.
+        """
+        gc_symbols = set("GCgc")
+        gc_count = sum(1 for nucleotide in self.sequence if nucleotide in gc_symbols)
+        if percentage:
+            return (gc_count / self.sequence.__len__()) * 100
+        else:
+            return gc_count / self.sequence.__len__()
+
+
+class DNASequence(NucleicAcidSequence):
+    """
+    Represents a DNA sequence.
+    Methods:
+    - transcribe(): Returns the transcribed RNA sequence.
+    """
+
+    def __init__(self, sequence: str):
+        super().__init__(sequence)
+        self.ALPHABET = set("ATGCatgc")
+        self.COMPLEMENT_MAP = {
+            "A": "T",
+            "C": "G",
+            "G": "C",
+            "T": "A",
+            "a": "t",
+            "c": "g",
+            "g": "c",
+            "t": "a",
         }
 
-    for name in input_dct:
-        if command in command_dct and command != 'get_atomic_mass':
-            if protein_canticles.is_protein_valid(input_dct[name]):
-                output_dct[name] = command_dct[command](input_dct[name], *args, **kwargs)
-            else:
-                raise ValueError('Invalid protein sequence')
-        elif command == 'get_atomic_mass':
-            output_dct[name] = command_dct[command](input_dct[name], *args, **kwargs)
-        else:
-            raise ValueError('Invalid command')
-    if len(output_dct) == 1:
-        return output_dct[list(output_dct.keys())[0]]
-
-    return output_dct
+    def transcribe(self) -> RNASequence:
+        """
+        Returns the transcribed RNA sequence.
+        Returns:
+        - RNASequence: Transcribed RNA sequence.
+        """
+        transcribed_sequence = self.sequence.replace("T", "U").replace("t", "u")
+        return RNASequence(transcribed_sequence)
 
 
-def filter_fastq(path_to_seqs: str, output_file_name: str = None, gc_bounds: tuple | int = (0, 100),
-                length_bounds: tuple | int = (0, 2**32), quality_threshold: int = 0) -> None:
+class RNASequence(NucleicAcidSequence):
+    """
+    Represents an RNA sequence.
+    """
+
+    def __init__(self, sequence: str):
+        super().__init__(sequence)
+        self.ALPHABET = set("AUGCaugc")
+        self.COMPLEMENT_MAP = {
+            "A": "U",
+            "C": "G",
+            "G": "C",
+            "U": "A",
+            "a": "u",
+            "c": "g",
+            "g": "c",
+            "u": "a",
+        }
+
+
+class AminoAcidSequence(BiologicalSequence):
+    """
+    Represents an amino acid sequence.
+    """
+
+    def __init__(self, sequence: str):
+        super().__init__(sequence)
+        self.ALPHABET = set("GgLlYySsEeQqDdNnFfAaKkRrHhCcVvPpWwIiMmTt")
+
+    def count_aa(self) -> dict:
+        """
+        Counts the number of given or all amino acids in a protein sequence.
+        Arguments:
+        - seq (str): sequence to count amino acids
+        - aminoacids (str): which amino acids to count in sequence
+        Return:
+        - dict: a dictionary with amino acids and its count
+        """
+
+        aa_dict_count = {}
+        for aa in set(self.sequence):
+            aa_dict_count[aa] = self.sequence.count(aa)
+        return aa_dict_count
+
+
+def filter_fastq(
+    path_to_seqs: str,
+    output_file_name: str = None,
+    gc_bounds: tuple | int = (0, 100),
+    length_bounds: tuple | int = (0, 2**32),
+    quality_threshold: int = 0,
+) -> None:
     """
     Filters FASTQ sequences based on the GC-content, length and quality parameters.
 
     Args:
     - path_to_seqs (str): the path to the FASTQ file to be filtered.
     - output_file_name (str): the name of the file where the filtered FASTQ sequences will be saved.
-    - gc_bounds (tuple, int): GC content range (in percentages) for filtering. If you pass a single number 
+    - gc_bounds (tuple, int): GC content range (in percentages) for filtering. If you pass a single number
     to the argument, it is assumed to be an upper bound.
     - length_bounds (tuple, int): length range for filtering. If you pass a single number to the argument,
     it is assumed to be an upper bound.
@@ -100,27 +180,27 @@ def filter_fastq(path_to_seqs: str, output_file_name: str = None, gc_bounds: tup
     if output_file_name is None:
         output_file_name = os.path.basename(path_to_seqs)
 
-    input_seqs = fastq_canticles.parse_fastq(path_to_seqs)
-    filtered_seqs = {}
+    records = SeqIO.parse(path_to_seqs, "fastq")
 
-    for name, (sequence, quality) in input_seqs.items():
-        gc_content = fastq_canticles.calculate_gc_content(sequence)
+    filtered_records = []
+
+    for record in records:
+        gc_content = gc_fraction(record.seq)
         if isinstance(gc_bounds, tuple):
             if not (gc_bounds[0] <= gc_content <= gc_bounds[1]):
                 continue
         elif gc_content >= gc_bounds:
             continue
-        sequence_length = fastq_canticles.calculate_seq_length(sequence)
+        sequence_length = len(record.seq)
         if isinstance(length_bounds, tuple):
             if not (length_bounds[0] <= sequence_length <= length_bounds[1]):
                 continue
         elif sequence_length >= length_bounds:
             continue
-        mean_quality = fastq_canticles.calculate_seq_quality(quality)
+        mean_quality = sum(record.letter_annotations["phred_quality"]) / sequence_length
         if mean_quality <= quality_threshold:
             continue
-        filtered_seqs[name] = (sequence, quality)
+        filtered_records.append(record)
 
-    fastq_canticles.write_filtered_fastq(filtered_seqs=filtered_seqs, output_file_name=output_file_name)
-
-    return None
+    with open(output_file_name, "w") as output_handle:
+        SeqIO.write(filtered_records, output_handle, "fastq")
