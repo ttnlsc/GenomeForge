@@ -5,13 +5,11 @@ from dataclasses import dataclass
 
 def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta: str = None) -> None:
     """
-    Converts a multiline FASTA file to a oneline FASTA file.
-
+    Converts a multiline FASTA file to an oneline FASTA file.
     Args:
     - input_fasta (str): path to the input FASTA file.
     - output_fasta (str): path to the output oneline FASTA file. If not provided, it will be generated
       using the input file name.
-
     Returns:
     - None: The function doesn't return a value but writes the oneline FASTA to the output file.
     """

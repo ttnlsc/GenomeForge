@@ -9,7 +9,7 @@ from Bio import SeqIO, SeqUtils
 from dataclasses import dataclass
 from io import BytesIO, StringIO
 from bs4 import BeautifulSoup
-from typing import Callable, Optional, List, Any
+from typing import Callable, Optional, List
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -67,7 +67,7 @@ class NucleicAcidSequence(BiologicalSequence):
         return self.sequence[item]
 
     def __str__(self) -> str:
-        return f"> {self.sequence}"
+        return f"{self.sequence}"
 
     def is_valid_alphabet(self) -> bool:
         """
@@ -91,7 +91,7 @@ class NucleicAcidSequence(BiologicalSequence):
         """
         if complement_map is None:
             raise NotImplementedError("Complement method not implemented for this class.")
-        complemented_sequence = "".join([self.complement_map[base] for base in self.sequence])
+        complemented_sequence = "".join([complement_map[base] for base in self.sequence])
 
         return self.__class__(complemented_sequence)
 
@@ -144,9 +144,6 @@ class DNASequence(NucleicAcidSequence):
 
 
 class RNASequence(NucleicAcidSequence):
-    """
-    Represents an RNA sequence.
-    """
     alphabet = set("AUGCaugc")
     complement_map = {
         "A": "U",

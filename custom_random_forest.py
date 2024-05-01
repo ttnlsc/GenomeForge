@@ -3,7 +3,7 @@ from typing import Optional
 import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.tree import DecisionTreeClassifier
-from concurrent.futures import ProcessPoolExecutor
+from multiprocessing import Pool
 
 
 class RandomForestClassifierCustom(BaseEstimator):
@@ -86,11 +86,10 @@ class RandomForestClassifierCustom(BaseEstimator):
         self.feat_ids_by_tree = []
         self.classes_ = sorted(np.unique(y))
 
-        with ProcessPoolExecutor(max_workers=n_jobs) as executor:
-            chunksize = len(X) // n_jobs
-            results = executor.map(self._fit_single_tree,
+        with Pool(n_jobs) as pool:
+            results = pool.map(self._fit_single_tree,
                                    [(X, y, self.max_depth, self.max_features, self.random_state, i) for i in
-                                    range(self.n_estimators)], chunksize=chunksize)
+                                    range(self.n_estimators)])
 
         self.trees, self.feat_ids_by_tree = zip(*results)
 
@@ -122,13 +121,10 @@ class RandomForestClassifierCustom(BaseEstimator):
         Returns:
         probas (array-like of shape (n_samples, n_classes)): The class probabilities of the input samples.
         """
-        with ProcessPoolExecutor(max_workers=n_jobs) as executor:
-            chunksize = len(X) // n_jobs
-            probas = list(
-                executor.map(self._predict_proba_single_tree,
-                             [(tree, feature_idx, X) for tree, feature_idx in zip(self.trees, self.feat_ids_by_tree)],
-                             chunksize=chunksize)
-            )
+        with Pool(n_jobs) as pool:
+            probas = pool.map(self._predict_proba_single_tree,
+                             [(tree, feature_idx, X) for tree, feature_idx in zip(self.trees, self.feat_ids_by_tree)]
+                              )
 
         avg_probas = np.sum(probas, axis=0) / self.n_estimators
         return avg_probas
