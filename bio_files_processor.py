@@ -1,4 +1,6 @@
+from __future__ import annotations
 import os
+from dataclasses import dataclass
 
 
 def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta: str = None) -> None:
@@ -15,14 +17,14 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta: str = Non
     """
     if output_fasta is None:
         output_fasta = 'oneline_' + os.path.basename(input_fasta)
-    
+
     with open(input_fasta, mode='r') as infile:
         multiline = infile.readlines()
-        
+
     output_str = []
     name = ''
     record = []
-    
+
     for line in multiline:
         line = line.strip()
         if line.startswith('>') and not name:
@@ -35,12 +37,12 @@ def convert_multiline_fasta_to_oneline(input_fasta: str, output_fasta: str = Non
             output_str.append(sequence)
             name = line
             record = []
-            
+
     if name and record:
         sequence = ''.join(record)
         output_str.append(name)
         output_str.append(sequence)
-    
+
     with open(output_fasta, mode='w') as outfile:
         outfile.write('\n'.join(output_str))
     return None
@@ -65,7 +67,7 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, genes_to_find: list, n_before
     if output_fasta is None:
         name = os.path.basename(input_gbk).split('.')[0]
         output_fasta = name + '.fasta'
-    
+
     with open(input_gbk, mode='r') as file:
         gbk = file.readlines()
     gene_protein_list = []
@@ -101,7 +103,7 @@ def select_genes_from_gbk_to_fasta(input_gbk: str, genes_to_find: list, n_before
             flanks.append(idx - i)
         for i in range(1, n_after + 1):
             flanks.append(idx + i)
-    
+
     selected_records = [gene_protein_list[i] for i in flanks]
     with open(output_fasta, mode='w') as outfile:
         for gene, protein in selected_records:
@@ -130,6 +132,7 @@ def change_fasta_start_pos(input_fasta: str, shift: int, output_fasta: str = Non
 
     output_str = []
     name = ''
+    shifted_sequence = ''
     sequence = []
 
     for line in input_data:
@@ -195,3 +198,92 @@ def parse_blast_output(input_file: str, output_file: str = None) -> None:
         outfile.write('\n'.join(significant_alignments))
 
     return None
+
+
+@dataclass
+class FastaRecord:
+    """
+    Represents a FASTA record.
+
+    Attributes:
+        id (str): The identifier of the record.
+        description (str): The description or additional information about the record.
+        sequence (str): The sequence data of the record.
+    """
+    id: str
+    description: str
+    sequence: str
+
+    def __repr__(self) -> str:
+        if len(self.sequence) < 10:
+            repr_seq = self.sequence
+        else:
+            repr_seq = f"{self.sequence[:10]}..."
+        return f"FastaRecord('{repr_seq}')"
+
+
+class OpenFasta:
+    """
+    Provides a context manager for reading FASTA files.
+
+    Attributes:
+        file (str): The path to the FASTA file.
+        mode (str): The mode in which the file should be opened (default is "r").
+    """
+
+    def __init__(self, file, mode="r"):
+        self.file = file
+        self.mode = mode
+        self.handler = None
+        self.current_line = None
+
+    def __enter__(self) -> OpenFasta:
+        self.handler = open(self.file, mode=self.mode)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        if self.handler:
+            self.handler.close()
+
+    def __iter__(self) -> OpenFasta:
+        return self
+
+    def __next__(self) -> FastaRecord:
+        line = self.handler.readline().strip()
+        if line == "":
+            raise StopIteration
+
+        lines = []
+
+        if self.current_line is not None:
+            lines.append(self.current_line)
+            self.current_line = None
+
+        while line:
+            if line.startswith(">") and lines:
+                header = lines[0][1:].split(" ", 1)
+                record_id = header[0]
+                record_description = header[1] if len(header) > 1 else ""
+                sequence = "".join(lines[1:])
+                return FastaRecord(id=record_id, description=record_description, sequence=sequence)
+            else:
+                lines.append(line)
+            line = self.handler.readline().strip()
+
+        if lines:
+            header = lines[0][1:].split(" ", 1)
+            record_id = header[0]
+            record_description = header[1] if len(header) > 1 else ""
+            sequence = "".join(lines[1:])
+            return FastaRecord(id=record_id, description=record_description, sequence=sequence)
+
+        raise StopIteration
+
+    def read_record(self) -> FastaRecord:
+        return self.__next__()
+
+    def read_records(self) -> list:
+        records = []
+        for record in self.__iter__():
+            records.append(record)
+        return records
