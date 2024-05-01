@@ -11,7 +11,7 @@ class TestDNASequence:
         Test the complement method of the DNASequence class.
         """
         dna_seq = DNASequence("ATGC")
-        assert str(dna_seq.complement(DNASequence.complement_map)) == "TACG"
+        assert str(dna_seq.complement()) == "TACG"
 
     def test_gc_content(self):
         """
@@ -77,4 +77,4 @@ def test_convert_multiline_fasta_to_oneline(input_fasta_path, output_fasta_path)
 def test_complement_method_not_implemented():
     sequence = NucleicAcidSequence("ATGC")
     with pytest.raises(NotImplementedError):
-        sequence.complement(None)
+        sequence.complement()

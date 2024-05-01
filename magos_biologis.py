@@ -77,7 +77,7 @@ class NucleicAcidSequence(BiologicalSequence):
             raise NotImplementedError("Is valid alphabet method not implemented for this class.")
         return set(self.sequence).issubset(self.alphabet)
 
-    def complement(self, complement_map: dict | None) -> NucleicAcidSequence:
+    def complement(self) -> NucleicAcidSequence:
         """
         Returns the complement of the sequence based on the provided complement map.
         Args:
@@ -89,9 +89,9 @@ class NucleicAcidSequence(BiologicalSequence):
         NotImplementedError: If complement_map is None, indicating that the complement method is not implemented for
             this class.
         """
-        if complement_map is None:
+        if self.complement_map is None:
             raise NotImplementedError("Complement method not implemented for this class.")
-        complemented_sequence = "".join([complement_map[base] for base in self.sequence])
+        complemented_sequence = "".join([self.complement_map[base] for base in self.sequence])
 
         return self.__class__(complemented_sequence)
 
